@@ -3,22 +3,39 @@ package com.whyisitdoingthat
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.event.Logging
 
-class MyActor extends Actor {
+case object Play
+case object Ping
+case object Pong
+
+class Actor1 extends Actor {
   val log = Logging(context.system, this)
 
   def receive = {
-    case s @ "test" => {
-      println(s"Received [$s]")
+    case Play => {
+      println("Play")
+      Pingpong.actor2 ! Ping
     }
-    case _ => {
-      println("Received something else")
+    case Pong => {
+      println("Pong")
       Util.caretaker ! Done
     }
   }
 }
 
+class Actor2 extends Actor {
+  val log = Logging(context.system, this)
+
+  def receive = {
+    case Ping => {
+      println("Ping")
+      sender ! Pong
+    }
+  }
+}
+
 object Pingpong extends App {
-  val actor1 = Util.system.actorOf(Props[MyActor])
-  actor1 ! "test"
-  actor1 ! 1
+  val actor1 = Util.system.actorOf(Props[Actor1])
+  lazy val actor2 = Util.system.actorOf(Props[Actor2])
+
+  actor1 ! Play
 }
