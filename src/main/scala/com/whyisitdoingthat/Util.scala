@@ -3,22 +3,25 @@ package com.whyisitdoingthat
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
 
-case object Done
+case object Slay
 
-class Caretaker extends Actor {
+
+class Slayer extends Actor {
+  /*
+  Gets the Done message and terminates the actor system.
+   */
   val log = Logging(context.system, this)
 
   def receive = {
-    case Done => {
-      println("-- shutting down")
+    case Slay => {
+      log.info("shutting down")
       Util.system.terminate()
     }
-    case _ => println("Unknown command")
   }
 }
 
 
 object Util {
-  val system = ActorSystem()
-  val caretaker: ActorRef = system.actorOf(Props[Caretaker])
+  val system = ActorSystem("akkademy")
+  val slayer: ActorRef = system.actorOf(Props[Slayer])
 }
