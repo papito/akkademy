@@ -33,7 +33,6 @@ import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 class Actor1 extends LoggingActor {
-  context.setReceiveTimeout(Duration.Inf)
   def receive: Actor.Receive = {
     case number: Int => {
       sender ! number * 10
