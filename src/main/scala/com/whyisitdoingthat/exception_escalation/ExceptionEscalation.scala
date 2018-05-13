@@ -45,9 +45,10 @@ object ExceptionEscalation extends AkkademyApp {
   val actor1 = system.actorOf(Props[Actor1])
 
   // both calls should succeed
-  for (idx <- 1 to iterations) actor1 ! idx
+  for (idx <- 1 to iterations) {
+    actor1 ! idx
+  }
 
-  do {} while (iterationsCounter.get < iterations)
-  shutdown()
+  waitToExit()
 }
 
