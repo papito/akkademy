@@ -21,3 +21,5 @@ Shows that the default error handling strategy of "Escalate" will propagate the 
 actors alive.
 
 ### HandleActorResponse
+
+Use `Future` to get back responses from an actor.

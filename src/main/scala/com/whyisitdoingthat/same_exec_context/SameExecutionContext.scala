@@ -38,10 +38,7 @@ class ActorWithSameExecContext extends LoggingActor {
       Future {
         Thread.sleep(800)
         log.info(s"Processing ${msg.idx}")
-
-        if (msg.idx == 100) {
-          SameExecutionContext.shutdown()
-        }
+        SameExecutionContext.tick()
       }
     }
   }
@@ -50,11 +47,12 @@ class ActorWithSameExecContext extends LoggingActor {
 
 object SameExecutionContext extends AkkademyApp {
   override val confFile: String = "empty"
+  override val iterations: Int = 100
 
   val actor1 = system.actorOf(Props[ActorWithSameExecContext])
 
   // Messages will not be queued until threads unlock
-  for (idx <- 1 to 100) {
+  for (idx <- 1 to iterations) {
     actor1 ! SlowProcess(idx)
   }
 }

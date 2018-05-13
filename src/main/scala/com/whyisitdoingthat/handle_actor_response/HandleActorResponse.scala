@@ -27,7 +27,6 @@ import akka.actor.{Actor, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.duration.Duration
@@ -44,6 +43,7 @@ class Actor1 extends LoggingActor {
 
 object HandleActorResponse extends AkkademyApp {
   override val confFile: String = "empty"
+  override val iterations: Int = 3
 
   val actor1 = system.actorOf(Props[Actor1])
   lazy val responseCount: AtomicInteger = new AtomicInteger(0)
@@ -53,7 +53,7 @@ object HandleActorResponse extends AkkademyApp {
   (actor1 ? 1).onComplete {
     case Success(value) => {
       println(s"Got back [$value]")
-      HandleActorResponse.responseCount.incrementAndGet()
+      tick()
     }
     case Failure(e) => println(s"Exception! $e")
   }
@@ -61,7 +61,7 @@ object HandleActorResponse extends AkkademyApp {
   (actor1 ? 2).onComplete {
     case Success(value) => {
       println(s"Got back [$value]")
-      HandleActorResponse.responseCount.incrementAndGet()
+      tick()
     }
     case Failure(e) => println(s"Exception! $e")
   }
@@ -69,10 +69,8 @@ object HandleActorResponse extends AkkademyApp {
   (actor1 ? 3).onComplete {
     case Success(value) => {
       println(s"Got back [$value]")
-      HandleActorResponse.responseCount.incrementAndGet()
+      tick()
     }
     case Failure(e) => println(s"Exception! $e")
   }
-  do {} while (responseCount.get < 3)
-  shutdown()
 }

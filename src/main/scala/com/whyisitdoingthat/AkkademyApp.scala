@@ -21,6 +21,8 @@
  */
 package com.whyisitdoingthat
 
+import java.util.concurrent.atomic.AtomicInteger
+
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 
@@ -34,9 +36,25 @@ abstract class AkkademyApp extends App {
     */
   val confFile: String
 
+  val iterations: Int
+  val iterationsCounter: AtomicInteger = new AtomicInteger(0)
+
   lazy val system: ActorSystem = ActorSystem("akkademy", ConfigFactory.load(confFile))
 
   def shutdown(): Unit = {
     system.terminate()
   }
+
+  /**
+    * Increments the iteration counter, atomically, and shuts down the system once the counter hits
+    * the iterations target.
+    */
+  def tick(): Int = {
+    val counter = iterationsCounter.incrementAndGet()
+    if (counter >= iterations) {
+      shutdown()
+    }
+    counter
+  }
+
 }

@@ -37,9 +37,7 @@ class ActorWithDiffExecContext extends LoggingActor {
       Future {
         Thread.sleep(800)
         log.info(s"Processing ${msg.idx}")
-        if (msg.idx == 100) {
-          DifferentExecutionContext.shutdown()
-        }
+        DifferentExecutionContext.tick()
       }
     }
   }
@@ -47,11 +45,12 @@ class ActorWithDiffExecContext extends LoggingActor {
 
 object DifferentExecutionContext extends AkkademyApp {
   override val confFile: String = "different-exec-context"
+  override val iterations: Int = 100
 
   val actor1 = system.actorOf(Props[ActorWithDiffExecContext])
 
   // Messages will queue up an be processed in blocking fashion, 4 at a time
-  for (idx <- 1 to 100) {
+  for (idx <- 1 to iterations) {
     actor1 ! SlowProcess(idx)
   }
 }

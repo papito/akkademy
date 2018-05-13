@@ -30,7 +30,7 @@ import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 class Actor1 extends LoggingActor {
   def receive: Actor.Receive = {
     case _ => {
-      log.info(s"The actor has thrown ${ExceptionEscalation.thrownCount.getAndIncrement()}")
+      log.info(s"The actor has thrown ${ExceptionEscalation.tick()}")
       throw new IllegalStateException
     }
   }
@@ -38,16 +38,16 @@ class Actor1 extends LoggingActor {
 
 object ExceptionEscalation extends AkkademyApp {
   override val confFile: String = "empty"
+  override val iterations: Int = 2
 
   lazy val thrownCount: AtomicInteger = new AtomicInteger(0)
 
   val actor1 = system.actorOf(Props[Actor1])
 
   // both calls should succeed
-  actor1 ! 1
-  actor1 ! 2
+  for (idx <- 1 to iterations) actor1 ! idx
 
-  do {} while (thrownCount.get < 2)
+  do {} while (iterationsCounter.get < iterations)
   shutdown()
 }
 
