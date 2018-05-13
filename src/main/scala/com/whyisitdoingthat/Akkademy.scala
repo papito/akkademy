@@ -1,13 +1,14 @@
 package com.whyisitdoingthat
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import akka.event.Logging
+import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
 
 case object Slay
 
 
 trait Akkademy  {
-  val system: ActorSystem = ActorSystem("akkademy")
+  val confFile: String
+  lazy val system: ActorSystem = ActorSystem("akkademy", ConfigFactory.load(confFile))
 
   def shutdown(): Unit = {
     system.terminate()
