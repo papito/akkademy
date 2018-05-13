@@ -54,7 +54,7 @@ class Actor2 extends Actor {
 }
 
 object Pingpong extends AkkademyApp {
-  override val confFile: String = "pingpong"
+  override val confFile: String = "empty"
 
   val actor1 = system.actorOf(Props[Actor1])
   lazy val actor2 = system.actorOf(Props[Actor2])

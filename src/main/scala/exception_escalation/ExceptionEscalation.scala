@@ -20,41 +20,35 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.whyisitdoingthat.same_exec_context
+package exception_escalation
+
+import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{Actor, Props}
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
-import scala.concurrent.{ExecutionContext, Future}
 
-case class SlowProcess(idx: Int)
-
-class ActorWithSameExecContext extends LoggingActor {
+class Actor1 extends LoggingActor {
   def receive: Actor.Receive = {
-    case msg: SlowProcess => {
-      // Dispatcher class is also a scala.concurrent.ExecutionContext
-      implicit val ex: ExecutionContext = context.dispatcher
-      log.info(s"Received message for ${msg.idx}")
-
-      Future {
-        Thread.sleep(800)
-        log.info(s"Processing ${msg.idx}")
-
-        if (msg.idx == 100) {
-          SameExecutionContext.shutdown()
-        }
-      }
+    case _ => {
+      log.info(s"The actor has thrown ${ExceptionEscalation.thrownCount.getAndIncrement()}")
+      throw new IllegalStateException
     }
   }
 }
 
-
-object SameExecutionContext extends AkkademyApp {
+object ExceptionEscalation extends AkkademyApp {
   override val confFile: String = "empty"
 
-  val actor1 = system.actorOf(Props[ActorWithSameExecContext])
+  lazy val thrownCount: AtomicInteger = new AtomicInteger(0)
 
-  // Messages will not be queued until threads unlock
-  for (idx <- 1 to 100) {
-    actor1 ! SlowProcess(idx)
-  }
+  val actor1 = system.actorOf(Props[Actor1])
+
+  // both calls should succeed
+  actor1 ! 1
+  actor1 ! 2
+
+  do {} while (thrownCount.get < 2)
+
+  shutdown()
 }
+
