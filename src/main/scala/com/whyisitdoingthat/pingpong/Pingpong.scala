@@ -1,7 +1,8 @@
-package com.whyisitdoingthat
+package com.whyisitdoingthat.pingpong
 
 import akka.actor.{Actor, Props}
 import akka.event.Logging
+import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 
 case object Play
 case object Ping
