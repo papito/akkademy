@@ -7,9 +7,9 @@ case object Play
 case object Ping
 case object Pong
 
-/*
-  Two actors play Ping Pong once
-*/
+//
+// Two actors play Ping Pong once
+//
 
 class Actor1 extends LoggingActor {
   def receive = {
@@ -35,7 +35,7 @@ class Actor2 extends Actor {
   }
 }
 
-object Pingpong extends App with Akkademy {
+object Pingpong extends AkkademyApp {
   override val confFile: String = "pingpong"
 
   val actor1 = system.actorOf(Props[Actor1])
