@@ -19,36 +19,60 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-package exception_escalation
+package com.whyisitdoingthat.handle_actor_response
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{Actor, Props}
+import akka.pattern.ask
+import akka.util.Timeout
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
+
 class Actor1 extends LoggingActor {
+  context.setReceiveTimeout(Duration.Inf)
   def receive: Actor.Receive = {
-    case _ => {
-      log.info(s"The actor has thrown ${ExceptionEscalation.thrownCount.getAndIncrement()}")
-      throw new IllegalStateException
+    case number: Int => {
+      sender ! number * 10
     }
   }
 }
 
-object ExceptionEscalation extends AkkademyApp {
+object HandleActorResponse extends AkkademyApp {
   override val confFile: String = "empty"
 
-  lazy val thrownCount: AtomicInteger = new AtomicInteger(0)
-
   val actor1 = system.actorOf(Props[Actor1])
+  lazy val responseCount: AtomicInteger = new AtomicInteger(0)
 
-  // both calls should succeed
-  actor1 ! 1
-  actor1 ! 2
+  implicit val timeout: Timeout = Timeout(1.second)
 
-  do {} while (thrownCount.get < 2)
+  (actor1 ? 1).onComplete {
+    case Success(value) => {
+      println(s"Got back [$value]")
+      HandleActorResponse.responseCount.incrementAndGet()
+    }
+    case Failure(e) => println(s"Exception! $e")
+  }
 
+  (actor1 ? 2).onComplete {
+    case Success(value) => {
+      println(s"Got back [$value]")
+      HandleActorResponse.responseCount.incrementAndGet()
+    }
+    case Failure(e) => println(s"Exception! $e")
+  }
+
+  (actor1 ? 3).onComplete {
+    case Success(value) => {
+      println(s"Got back [$value]")
+      HandleActorResponse.responseCount.incrementAndGet()
+    }
+    case Failure(e) => println(s"Exception! $e")
+  }
+  do {} while (responseCount.get < 3)
   shutdown()
 }
-

@@ -4,7 +4,7 @@ A set of small examples using Scala/Akka concurrency toolkit.
 ## Examples TOC
 
 ### Pingpong
-Two actors play ping pong once
+Two actors play ping pong once.
 
 ### SameExecutionContext
 The `Future` in `actor1` uses the same execution context, and will create a bottleneck for 
@@ -17,5 +17,7 @@ in batches of 8, as that is the thread pool we configure for this actor system.
 
 ### ExceptionEscalation
 
-Shows that the default error handling strategy of "Escalate" will propagate the errors but have
-an actor alive.
+Shows that the default error handling strategy of "Escalate" will propagate the errors but keep
+actors alive.
+
+### HandleActorResponse
