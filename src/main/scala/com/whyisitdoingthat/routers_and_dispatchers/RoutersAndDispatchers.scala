@@ -19,57 +19,61 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.whyisitdoingthat.handle_actor_response
 
-import java.util.concurrent.atomic.AtomicInteger
+package com.whyisitdoingthat.routers_and_dispatchers
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
+import akka.routing.FromConfig
 import akka.util.Timeout
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-class Actor1 extends LoggingActor {
-  // Gets an integer and multiplies it by 10
+
+class BlockingActor extends LoggingActor {
   def receive: Actor.Receive = {
-    case number: Int => {
-      sender ! number * 10
+    case idx: Int => {
+      log.info(s"Blocking actor on $idx")
+      Thread.sleep(800)
+      RoutersAndDispatchers.tick()
     }
   }
 }
 
-object HandleActorResponse extends AkkademyApp {
-  override val confFile: String = "empty"
-  override val iterations: Int = 3
+class NonBlockingActor extends LoggingActor {
+  def receive: Actor.Receive = {
+    case s: String => {
+      sender ! s"Thank you for sending [$s]"
+    }
+  }
+}
 
-  val actor1 = system.actorOf(Props[Actor1])
-  lazy val responseCount: AtomicInteger = new AtomicInteger(0)
-
+object RoutersAndDispatchers extends AkkademyApp {
+  override val confFile: String = "routers-and-dispatchers"
+  override val iterations: Int = 200
   implicit val timeout: Timeout = Timeout(1.second)
 
-  (actor1 ? 1).onComplete {
-    case Success(value) => {
-      println(s"Got back [$value]")
-      tick()
-    }
-    case Failure(e) => println(s"Exception! $e")
+  val blockingRouter: ActorRef = system.actorOf(
+    FromConfig.props(Props[BlockingActor]), "blocking-router")
+
+  val nonBlockingRouter: ActorRef = system.actorOf(
+    FromConfig.props(Props[NonBlockingActor]), "non-blocking-router")
+
+  for (idx <- 1 to iterations / 2) {
+    blockingRouter ! idx
   }
 
-  (actor1 ? 2).onComplete {
-    case Success(value) => {
-      println(s"Got back [$value]")
-      tick()
+  for (idx <- 1 to iterations / 2) {
+    (nonBlockingRouter ? s"MESSAGE $idx").onComplete {
+      case Success(value) => {
+        println(value)
+        tick()
+      }
+      case Failure(e) => println(s"Exception! $e")
     }
-    case Failure(e) => println(s"Exception! $e")
   }
 
-  (actor1 ? 3).onComplete {
-    case Success(value) => {
-      println(s"Got back [$value]")
-      tick()
-    }
-    case Failure(e) => println(s"Exception! $e")
-  }
+
 }

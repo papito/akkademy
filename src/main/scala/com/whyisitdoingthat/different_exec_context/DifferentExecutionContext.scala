@@ -49,7 +49,7 @@ object DifferentExecutionContext extends AkkademyApp {
 
   val actor1 = system.actorOf(Props[ActorWithDiffExecContext])
 
-  // Messages will queue up an be processed in blocking fashion, 4 at a time
+  // Messages will queue up and be processed in blocking fashion, 4 at a time
   for (idx <- 1 to iterations) {
     actor1 ! SlowProcess(idx)
   }

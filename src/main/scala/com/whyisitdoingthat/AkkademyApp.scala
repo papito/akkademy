@@ -35,18 +35,19 @@ abstract class AkkademyApp extends App {
     * Files live in src/main/resources/
     */
   val confFile: String
-
-  val iterations: Int
-  private val iterationsCounter: AtomicInteger = new AtomicInteger(0)
-
   lazy val system: ActorSystem = ActorSystem("akkademy", ConfigFactory.load(confFile))
+
+  // total number of expected iterations until we shut down the Actor system
+  val iterations: Int
+
+  private val iterationsCounter: AtomicInteger = new AtomicInteger(0)
 
   def shutdown(): Unit = {
     system.terminate()
   }
 
   /**
-    * Increments the iteration counter, atomically, and shuts down the system once the counter hits
+    * Increments the iteration counter, atomically, and shut down the system once the counter hits
     * the iterations target.
     */
   def tick(): Int = {
@@ -59,10 +60,10 @@ abstract class AkkademyApp extends App {
 
   /**
     * Hang in a loop until the ticker reaches the counter.
-    * Used in situations where it's not east to increment the ticker.
+    * Used in situations where it's not easy to increment the ticker.
     */
   def waitToExit(): Unit = {
-    do {} while (iterationsCounter.get < iterations)
+    do {Thread.sleep(100)} while (iterationsCounter.get < iterations)
     shutdown()
   }
 
