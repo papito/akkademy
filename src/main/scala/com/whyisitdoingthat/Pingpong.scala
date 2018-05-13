@@ -7,6 +7,9 @@ case object Play
 case object Ping
 case object Pong
 
+/*
+  Two actors play Ping Pong once
+*/
 
 class Actor1 extends Actor {
   val log = Logging(context.system, this)
@@ -18,7 +21,7 @@ class Actor1 extends Actor {
     }
     case Pong => {
       log.info("Pong")
-      Util.slayer ! Slay
+      Pingpong.shutdown()
     }
   }
 }
@@ -34,11 +37,9 @@ class Actor2 extends Actor {
   }
 }
 
-object Pingpong extends App {
-  /* Two actors play Ping Pong once */
-
-  val actor1 = Util.system.actorOf(Props[Actor1])
-  lazy val actor2 = Util.system.actorOf(Props[Actor2])
+object Pingpong extends App with Akkademy {
+  val actor1 = system.actorOf(Props[Actor1])
+  lazy val actor2 = system.actorOf(Props[Actor2])
 
   actor1 ! Play
 }
