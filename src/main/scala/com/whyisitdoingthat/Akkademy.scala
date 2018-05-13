@@ -11,6 +11,7 @@ trait Akkademy  {
   lazy val system: ActorSystem = ActorSystem("akkademy", ConfigFactory.load(confFile))
 
   def shutdown(): Unit = {
+    println("-- shutting down")
     system.terminate()
   }
 }

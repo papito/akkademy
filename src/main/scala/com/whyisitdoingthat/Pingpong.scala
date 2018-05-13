@@ -11,9 +11,7 @@ case object Pong
   Two actors play Ping Pong once
 */
 
-class Actor1 extends Actor {
-  val log = Logging(context.system, this)
-
+class Actor1 extends LoggingActor {
   def receive = {
     case Play => {
       log.info("Play")
