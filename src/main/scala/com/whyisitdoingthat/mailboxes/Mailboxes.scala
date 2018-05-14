@@ -22,19 +22,47 @@
 
 package com.whyisitdoingthat.mailboxes
 
-import akka.actor.Actor
+import akka.actor.{Actor, DeadLetter, Props}
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 
-class Actor1 extends LoggingActor {
+class BoundedMailboxActor extends LoggingActor {
   // Gets an integer and multiplies it by 10
   def receive: Actor.Receive = {
     case number: Int => {
-      sender ! number * 10
+      log.info(s"Got $number")
+      // sender ! number * 10
+      println("!!!!!!!!!")
+      Mailboxes.tick()
     }
   }
 }
 
+class DeadLetterWatcherActor extends LoggingActor {
+  var deadLetterCount = 0
+
+  def receive: Actor.Receive = {
+    case d: DeadLetter => {
+      deadLetterCount += 1
+      log.error(s"$d. Dead letters now: $deadLetterCount")
+      Mailboxes.tick()
+    }
+    case msg => log.info(s"Dead letter watch: $msg")
+  }
+}
+
 object Mailboxes extends AkkademyApp {
-  override val confFile: String = "empty"
-  override val iterations: Int = 0
+  override val confFile: String = "mailboxes"
+  override val iterations: Int = 20
+  val boundedMailboxActor = system.actorOf(
+    Props[BoundedMailboxActor].withMailbox("bounded-mailbox"))
+
+  val deadLetterWatcher = system.actorOf(
+    Props[DeadLetterWatcherActor],
+    name = "dead-letter-watcher")
+
+  system.eventStream.subscribe(deadLetterWatcher, classOf[DeadLetter])
+
+  for (idx <- 1 to iterations) {
+    boundedMailboxActor ! idx
+  }
 }
