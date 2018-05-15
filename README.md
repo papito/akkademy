@@ -2,8 +2,8 @@
 A set of small examples using Scala/Akka concurrency toolkit.
 
 ### Running
-./sbt
-sbt> run
+    ./sbt
+    sbt > run
 
 Choose a class to run.
 
