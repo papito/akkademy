@@ -48,9 +48,9 @@ which we will monitor by subscribing to the Akka bus event.
 
 #### Blocking Bounded Mailbox
 The Mailbox will block on getting new messages while the actor is busy processing. Even though the 
-mailbox has capacity of 4, since the actor blocks, the messages will not be processed one by one,
+mailbox has capacity of 4, since the actor blocks, the messages will be processed one by one,
 which brings us to...
 
-#### Blocking Bounded Mailbox,a Router, and a Dispatcher
+#### Blocking Bounded Mailbox, a Router, and a Dispatcher
 A router of 4 blocking actors, with its own thread pool and a limited mailbox. This will process
 requests in batches of 4.
