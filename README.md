@@ -1,6 +1,13 @@
 # Akkademy
 A set of small examples using Scala/Akka concurrency toolkit.
 
+### Running
+./sbt
+sbt> run
+
+Choose a class to run.
+
+
 ### Motivation
 This is less of a tutorial and more of an example repository and personal Akka playground.
 It's easier to get a configuration right in a smaller environment with fewer factors in play.
