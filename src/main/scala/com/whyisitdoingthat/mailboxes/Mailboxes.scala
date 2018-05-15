@@ -22,16 +22,26 @@
 
 package com.whyisitdoingthat.mailboxes
 
-import akka.actor.{Actor, DeadLetter, Props}
+import java.util.concurrent.atomic.AtomicInteger
+
+import akka.actor.{Actor, ActorRef, DeadLetter, PoisonPill, Props}
+import akka.routing.FromConfig
 import com.whyisitdoingthat.{AkkademyApp, LoggingActor}
 
-class BoundedMailboxActor extends LoggingActor {
-  // Gets an integer and multiplies it by 10
+class AsyncActor extends LoggingActor {
   def receive: Actor.Receive = {
-    case number: Int => {
-      log.info(s"Got $number")
-      // sender ! number * 10
-      println("!!!!!!!!!")
+    case msg: String => {
+      log.info(s"Async actor: $msg")
+      Mailboxes.tick()
+    }
+  }
+}
+
+class BlockingActor extends LoggingActor {
+  def receive: Actor.Receive = {
+    case msg: String => {
+      log.info(s"Blocking actor: $msg")
+      Thread.sleep(250)
       Mailboxes.tick()
     }
   }
@@ -52,9 +62,8 @@ class DeadLetterWatcherActor extends LoggingActor {
 
 object Mailboxes extends AkkademyApp {
   override val confFile: String = "mailboxes"
-  override val iterations: Int = 20
-  val boundedMailboxActor = system.actorOf(
-    Props[BoundedMailboxActor].withMailbox("bounded-mailbox"))
+  override val iterations: Int = 60
+  val iterationsPerExample = 20
 
   val deadLetterWatcher = system.actorOf(
     Props[DeadLetterWatcherActor],
@@ -62,7 +71,31 @@ object Mailboxes extends AkkademyApp {
 
   system.eventStream.subscribe(deadLetterWatcher, classOf[DeadLetter])
 
-  for (idx <- 1 to iterations) {
-    boundedMailboxActor ! idx
+  println("=================\nBOUNDED MAILBOX\n=================")
+  val boundedMailboxActor = system.actorOf(
+    Props[AsyncActor].withMailbox("bounded-mailbox"))
+
+  for (idx <- 1 to iterationsPerExample) {
+    boundedMailboxActor ! s"Bounded mailbox: $idx"
+  }
+
+  Thread.sleep(1000)
+
+  println("=================\nBLOCKING BOUNDED MAILBOX\n=================")
+  val blockingBoundedMailboxActor = system.actorOf(
+    Props[BlockingActor].withMailbox("blocking-bounded-mailbox"))
+
+  for (idx <- 1 to iterationsPerExample) {
+    blockingBoundedMailboxActor ! s"Blocking bounded mailbox: $idx"
+  }
+
+  Thread.sleep(1000)
+
+  println("=================\nBLOCKING BOUNDED MAILBOX WITH THREAD POOL\n=================")
+  val blockingRouter: ActorRef = system.actorOf(
+    FromConfig.props(Props[BlockingActor]), "blocking-router")
+
+  for (idx <- 1 to iterationsPerExample) {
+    blockingRouter ! s"Blocking bounded mailbox with threadpool: $idx"
   }
 }
