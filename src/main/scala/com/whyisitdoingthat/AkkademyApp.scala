@@ -59,7 +59,7 @@ abstract class AkkademyApp extends App {
   }
 
   /**
-    * Hang in a loop until the ticker reaches the counter.
+    * Hang in a loop until the ticker hits the iterations target.
     * Used in situations where it's not easy to increment the ticker.
     */
   def waitToExit(): Unit = {
