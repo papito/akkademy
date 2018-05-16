@@ -44,7 +44,6 @@ class ActorWithSameExecContext extends LoggingActor {
   }
 }
 
-
 object SameExecutionContext extends AkkademyApp {
   override val confFile: String = "empty"
   override val iterations: Int = 100
