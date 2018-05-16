@@ -42,9 +42,7 @@ class Actor1 extends LoggingActor {
   }
 }
 
-class Actor2 extends Actor {
-  val log = Logging(context.system, this)
-
+class Actor2 extends LoggingActor {
   def receive: Actor.Receive = {
     case Ping => {
       log.info("Ping")
