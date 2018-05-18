@@ -7,21 +7,6 @@ A set of small examples using Scala/Akka concurrency toolkit.
 
 Choose a class to run.
 
-
-### Motivation
-This is less of a tutorial and more of an example repository and personal Akka playground.
-It's easier to get a configuration right in a smaller environment with fewer factors in play.
-
-The basics of Akka are actually pretty simple, and are much easier to grasp than the 
-old school multi-threading model. 
-
-However, while you can get a "Hello World" up right away, the complexity hits hard and fast in 
-real-world deployments, where you can quickly run out of resources under data pressure, 
-and where configuration becomes more complex.
-
-The actor model in Scala is then taken to another level with [Akka Streams](https://doc.akka.io/docs/akka/2.5/stream/index.html) 
-and [Alpakka](https://developer.lightbend.com/docs/alpakka/current/).
-
 ## Examples TOC
 
 ### Pingpong
