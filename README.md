@@ -1,48 +1,27 @@
 # Akkademy
-A set of small examples using Scala/Akka concurrency toolkit.
+A set of small examples using Scala & Pekko.
 
 ### Running
-    ./sbt
-    sbt> run
+    sbt run # then see the TOC for the available examples
+    # OR
+     make run
 
-Choose a class to run.
+## TOC
 
-## Examples TOC
+### Greeter
+From the [Quick Start guide](https://github.com/apache/pekko-quickstart-scala.g8/blob/main/src/main/g8/src/main/scala/%24package%24/PekkoQuickstart.scala),
 
-### Pingpong
-Two actors play ping pong once.
+### IoT
+From the [IoT example](https://doc.akka.io/docs/akka/current/typed/guide/tutorial_1.html).
 
-### SameExecutionContext
-The `Future` in `actor1` uses the same execution context, and will create a bottleneck for 
-receiving messages. You will see the messages arriving in batches, and not in a firehose fashion.
 
-### DifferentExecutionContext
-The actor uses a separate dispatcher, allocating executor threads for the blocking operations.
-You will see the actor getting all the messages virtually at once and then going to work,
-in batches of 8, as that is the thread pool we configure for this actor system.
+## Development
 
-### ExceptionEscalation
-Shows that the default error handling strategy of "Escalate" will propagate the errors but keep
-actors alive.
+### Running tests
+    make test
 
-### HandleActorResponse
-Use `Future` to get back responses from an actor.
+### Running the tests tagged with `Focused`
+    make test-focused
 
-### RoutersAndDispatchers
-Creates two actor pools, via routers - one for blocking operations, and one for non-blocking
-operations. This demonstrates that the non-blocking pool finishes first while the blocking
-pool finishes later, not interfering with the async code.
-
-### Mailboxes
-#### Bounded Mailbox
-The actor will receive more messages at once than the mailbox capacity, resulting in dead letters
-which we will monitor by subscribing to the Akka bus event.
-
-#### Blocking Bounded Mailbox
-The Mailbox will block on getting new messages while the actor is busy processing. Even though the 
-mailbox has capacity of 4, since the actor blocks, the messages will be processed one by one,
-which brings us to...
-
-#### Blocking Bounded Mailbox, a Router, and a Dispatcher
-A router of 4 blocking actors, with its own thread pool and a limited mailbox. This will process
-requests in batches of 4.
+### Running the linter
+    make lint
