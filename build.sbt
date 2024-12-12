@@ -21,6 +21,7 @@ scalacOptions := Seq(
   "-Wunused:imports",
 )
 
+
 inThisBuild(
   List(
     scalaVersion := scalaVersion.value,
@@ -28,3 +29,7 @@ inThisBuild(
     semanticdbVersion := scalafixSemanticdb.revision,
   )
 )
+
+commands += Command.command("testFocused") { state =>
+  "testOnly -- -n focused" :: state
+}

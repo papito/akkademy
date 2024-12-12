@@ -13,8 +13,8 @@ object Device {
     Behaviors.setup(context => new Device(context, groupId, deviceId))
 
   sealed trait Command
-  final private case class ReadTemperature(requestId: Long, replyTo: ActorRef[RespondTemperature]) extends Command
-  final private case class RespondTemperature(requestId: Long, value: Option[Double])
+  final case class ReadTemperature(requestId: Long, replyTo: ActorRef[RespondTemperature]) extends Command
+  final case class RespondTemperature(requestId: Long, value: Option[Double])
 }
 
 private class Device(context: ActorContext[Device.Command], groupId: String, deviceId: String) extends AbstractBehavior[Device.Command](context) {
