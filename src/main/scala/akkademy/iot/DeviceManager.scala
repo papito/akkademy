@@ -1,12 +1,14 @@
 package akkademy.iot
 
-import org.apache.pekko.actor.typed.ActorRef
-import org.apache.pekko.actor.typed.Behavior
-import org.apache.pekko.actor.typed.PostStop
-import org.apache.pekko.actor.typed.Signal
-import org.apache.pekko.actor.typed.scaladsl.AbstractBehavior
-import org.apache.pekko.actor.typed.scaladsl.ActorContext
-import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko
+
+import pekko.actor.typed.ActorRef
+import pekko.actor.typed.Behavior
+import pekko.actor.typed.PostStop
+import pekko.actor.typed.Signal
+import pekko.actor.typed.scaladsl.AbstractBehavior
+import pekko.actor.typed.scaladsl.ActorContext
+import pekko.actor.typed.scaladsl.Behaviors
 
 object DeviceManager {
   def apply(): Behavior[Command] =
@@ -27,18 +29,31 @@ object DeviceManager {
   final case class ReplyDeviceList(requestId: Long, ids: Set[String])
 
   final private case class DeviceGroupTerminated(groupId: String) extends DeviceManager.Command
+
+  final case class RequestAllTemperatures(requestId: Long, groupId: String, replyTo: ActorRef[RespondAllTemperatures])
+    extends DeviceGroupQuery.Command
+    with DeviceGroup.Command
+    with DeviceManager.Command
+
+  final case class RespondAllTemperatures(requestId: Long, temperatures: Map[String, TemperatureReading])
+
+  sealed trait TemperatureReading
+  final case class Temperature(value: Double) extends TemperatureReading
+  case object TemperatureNotAvailable extends TemperatureReading
+  case object DeviceNotAvailable extends TemperatureReading
+  case object DeviceTimedOut extends TemperatureReading
 }
 
 class DeviceManager(context: ActorContext[DeviceManager.Command]) extends AbstractBehavior[DeviceManager.Command](context) {
   import DeviceManager._
 
-  private var groupIdToActor: Map[String, ActorRef[DeviceGroup.Command]] = Map.empty[String, ActorRef[DeviceGroup.Command]]
+  private var groupIdToActor = Map.empty[String, ActorRef[DeviceGroup.Command]]
 
   context.log.info("DeviceManager started")
 
   override def onMessage(msg: Command): Behavior[Command] =
     msg match {
-      case trackMsg @ RequestTrackDevice(groupId, _, _) =>
+      case trackMsg @ RequestTrackDevice(groupId, _, replyTo) =>
         groupIdToActor.get(groupId) match {
           case Some(ref) =>
             ref ! trackMsg
@@ -57,6 +72,15 @@ class DeviceManager(context: ActorContext[DeviceManager.Command]) extends Abstra
             ref ! req
           case None =>
             replyTo ! ReplyDeviceList(requestId, Set.empty)
+        }
+        this
+
+      case req @ RequestAllTemperatures(requestId, groupId, replyTo) =>
+        groupIdToActor.get(groupId) match {
+          case Some(ref) =>
+            ref ! req
+          case None =>
+            replyTo ! RespondAllTemperatures(requestId, Map.empty)
         }
         this
 

@@ -1,6 +1,8 @@
 package akkademy.iot
 
+//#device-with-passivate
 import org.apache.pekko
+
 import pekko.actor.typed.ActorRef
 import pekko.actor.typed.Behavior
 import pekko.actor.typed.PostStop
@@ -17,8 +19,9 @@ object Device {
   sealed trait Command
 
   final case class ReadTemperature(requestId: Long, replyTo: ActorRef[RespondTemperature]) extends Command
-  final case class RespondTemperature(requestId: Long, value: Option[Double])
-
+  // #respond-declare
+  final case class RespondTemperature(requestId: Long, deviceId: String, value: Option[Double])
+  // #respond-declare
   final case class RecordTemperature(requestId: Long, value: Double, replyTo: ActorRef[TemperatureRecorded]) extends Command
   final case class TemperatureRecorded(requestId: Long)
 
@@ -39,11 +42,11 @@ class Device(context: ActorContext[Device.Command], groupId: String, deviceId: S
         lastTemperatureReading = Some(value)
         replyTo ! TemperatureRecorded(id)
         this
-
+      // #respond-reply
       case ReadTemperature(id, replyTo) =>
-        replyTo ! RespondTemperature(id, lastTemperatureReading)
+        replyTo ! RespondTemperature(id, deviceId, lastTemperatureReading)
         this
-
+      // #respond-reply
       case Passivate =>
         Behaviors.stopped
     }

@@ -9,6 +9,8 @@ import org.apache.pekko.actor.typed.scaladsl.ActorContext
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.actor.typed.scaladsl.LoggerOps
 
+import scala.concurrent.duration.DurationInt
+
 object DeviceGroup {
   def apply(groupId: String): Behavior[Command] =
     Behaviors.setup(context => new DeviceGroup(context, groupId))
@@ -21,7 +23,7 @@ object DeviceGroup {
 
 class DeviceGroup(context: ActorContext[DeviceGroup.Command], groupId: String) extends AbstractBehavior[DeviceGroup.Command](context) {
   import DeviceGroup._
-  import DeviceManager.{DeviceRegistered, ReplyDeviceList, RequestDeviceList, RequestTrackDevice}
+  import DeviceManager.{DeviceRegistered, ReplyDeviceList, RequestAllTemperatures, RequestDeviceList, RequestTrackDevice}
 
   private var deviceIdToActor = Map.empty[String, ActorRef[Device.Command]]
 
@@ -29,6 +31,7 @@ class DeviceGroup(context: ActorContext[DeviceGroup.Command], groupId: String) e
 
   override def onMessage(msg: Command): Behavior[Command] =
     msg match {
+      // query-added
       case trackMsg @ RequestTrackDevice(`groupId`, deviceId, replyTo) =>
         deviceIdToActor.get(deviceId) match {
           case Some(deviceActor) =>
@@ -36,6 +39,7 @@ class DeviceGroup(context: ActorContext[DeviceGroup.Command], groupId: String) e
           case None =>
             context.log.info("Creating device actor for {}", trackMsg.deviceId)
             val deviceActor = context.spawn(Device(groupId, deviceId), s"device-$deviceId")
+            // device-group-register
             context.watchWith(deviceActor, DeviceTerminated(deviceActor, groupId, deviceId))
             deviceIdToActor += deviceId -> deviceActor
             replyTo ! DeviceRegistered(deviceActor)
@@ -58,6 +62,15 @@ class DeviceGroup(context: ActorContext[DeviceGroup.Command], groupId: String) e
         deviceIdToActor -= deviceId
         this
 
+      // query-added
+      // ... other cases omitted
+
+      case RequestAllTemperatures(requestId, gId, replyTo) =>
+        if (gId == groupId) {
+          context.spawnAnonymous(DeviceGroupQuery(deviceIdToActor, requestId = requestId, requester = replyTo, 3.seconds))
+          this
+        } else
+          Behaviors.unhandled
     }
 
   override def onSignal: PartialFunction[Signal, Behavior[Command]] = {
