@@ -32,13 +32,13 @@ object DeviceManager {
 class DeviceManager(context: ActorContext[DeviceManager.Command]) extends AbstractBehavior[DeviceManager.Command](context) {
   import DeviceManager._
 
-  var groupIdToActor: Map[String,ActorRef[DeviceGroup.Command]] = Map.empty[String, ActorRef[DeviceGroup.Command]]
+  private var groupIdToActor: Map[String, ActorRef[DeviceGroup.Command]] = Map.empty[String, ActorRef[DeviceGroup.Command]]
 
   context.log.info("DeviceManager started")
 
   override def onMessage(msg: Command): Behavior[Command] =
     msg match {
-      case trackMsg @ RequestTrackDevice(groupId, _, replyTo) =>
+      case trackMsg @ RequestTrackDevice(groupId, _, _) =>
         groupIdToActor.get(groupId) match {
           case Some(ref) =>
             ref ! trackMsg

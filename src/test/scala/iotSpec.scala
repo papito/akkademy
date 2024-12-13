@@ -46,7 +46,7 @@ class iotSpec extends ScalaTestWithActorTestKit with AnyWordSpecLike  {
     response2.value should ===(Some(55.0))
   }
 
-  "be able to list active devices" taggedAs Focused in {
+  "be able to list active devices" in {
     val registeredProbe = createTestProbe[DeviceRegistered]()
     val groupActor = spawn(DeviceGroup("group"))
 
