@@ -1,9 +1,35 @@
+organization := "renegade-otter"
 name := "akkademy"
+version := "2.0.0"
+scalaVersion := "2.13.15"
+val pekkoVersion = "1.1.2"
 
-version := "0.1"
+libraryDependencies ++= Seq(
+  "org.apache.pekko" %% "pekko-actor-typed"         % pekkoVersion,
+  "org.apache.pekko" %% "pekko-persistence-testkit" % pekkoVersion % Test,
+  "org.scalatest"    %% "scalatest" % "3.2.19"      % Test,
 
-scalaVersion := "2.12.6"
+  "ch.qos.logback"   % "logback-classic"            % "1.5.12",
+  "org.slf4j"        % "slf4j-api"                  % "2.0.16",
+)
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+scalacOptions := Seq(
+  "-deprecation",
+  "-language:postfixOps",
+  "-opt:l:method",
+  "-feature",
+  "-Wunused:imports",
+)
 
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.12"
+
+inThisBuild(
+  List(
+    scalaVersion := scalaVersion.value,
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision,
+  )
+)
+
+commands += Command.command("testFocused") { state =>
+  "testOnly -- -n focused" :: state
+}
