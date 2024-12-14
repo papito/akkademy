@@ -1,5 +1,6 @@
 package akkademy.mailbox
 
+import akkademy.DeadLetterListener
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import org.apache.pekko.actor.DeadLetter
@@ -8,8 +9,6 @@ import org.apache.pekko.actor.typed.Behavior
 import org.apache.pekko.actor.typed.MailboxSelector
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.actor.typed.scaladsl.adapter._
-
-import akkademy.DeadLetterListener
 
 object LimitedCapacityActor {
   def apply(): Behavior[String] = Behaviors.receive {
@@ -34,7 +33,7 @@ object BoundedMailboxConfig {
 }
 
 object BoundedMailboxApp extends App {
-  ActorSystem(
+  val system: ActorSystem[String] = ActorSystem(
     Behaviors.setup[String] {
       context =>
         val limitedCapacityActor = context.spawn(
@@ -55,4 +54,7 @@ object BoundedMailboxApp extends App {
     "BoundedMailboxSystem",
     BoundedMailboxConfig.config
   )
+
+  Thread.sleep(2000)
+  system.terminate()
 }

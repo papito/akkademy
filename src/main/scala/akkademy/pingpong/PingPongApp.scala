@@ -42,7 +42,7 @@ object PongPlayer {
 }
 
 object PingPongApp extends App {
-  ActorSystem(
+  val system: ActorSystem[Ping] = ActorSystem(
     Behaviors.setup[Ping] {
       context =>
         val player1 = context.spawn(PingPlayer(3), "playerPong")
@@ -52,4 +52,8 @@ object PingPongApp extends App {
     },
     "PingPongSystem"
   )
+
+  Thread.sleep(1000)
+  system.terminate()
+
 }

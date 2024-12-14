@@ -59,7 +59,11 @@ object GreeterMain {
 
 object GreeterApp extends App {
   // actor-system
-  private val greeterMain: ActorSystem[GreeterMain.SayHello] = ActorSystem(GreeterMain(), "PekkoQuickstart")
+  private val greeterMain: ActorSystem[GreeterMain.SayHello] = ActorSystem(GreeterMain(), "GreeterAppSystem")
 
   greeterMain ! GreeterMain.SayHello("Charles")
+
+  Thread.sleep(1000)
+  greeterMain.terminate()
+
 }
