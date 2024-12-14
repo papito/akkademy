@@ -4,7 +4,7 @@ A set of small examples using Scala & Pekko.
 ### Running
     sbt run # then see the TOC for the available examples
     # OR
-     make run
+    make run
 
 ## TOC
 
@@ -35,5 +35,5 @@ To tag a test with `Focused`, add the `Focused` tag to the test, like this:
    }
 ```
 
-### Running the linter
+### Running the linter and auto-formatter
     make lint
