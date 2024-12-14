@@ -15,12 +15,18 @@ A simple example of a couple of punk actors sending messages to each other.
 Shows that an overwhelmed actor mailbox will drop messages.
 
 ### BlockingBoundedMailboxApp
-Shows that an overwhelmed actor mailbox will block the sender.
+Shows that an overwhelmed blocking actor mailbox will block the sender.
+
+### ChildStopOnErrorApp
+Shows that a parent actor can stop its children when one of them fails.
+
+### ChildResumeOnErrorApp
+Shows that a parent actor can restart its children when one of them fails.
 
 ### GreeterApp
 From the [Quick Start guide](https://github.com/apache/pekko-quickstart-scala.g8/blob/main/src/main/g8/src/main/scala/%24package%24/PekkoQuickstart.scala).
 
-### iotApp
+### IotApp
 From the [IoT example](https://doc.akka.io/docs/akka/current/typed/guide/tutorial_1.html).
 
 
