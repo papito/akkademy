@@ -14,6 +14,9 @@ A simple example of a couple of punk actors sending messages to each other.
 ### BoundedMailboxApp
 Shows that an overwhelmed actor mailbox will drop messages.
 
+### BlockingBoundedMailboxApp
+Shows that an overwhelmed actor mailbox will block the sender.
+
 ### GreeterApp
 From the [Quick Start guide](https://github.com/apache/pekko-quickstart-scala.g8/blob/main/src/main/g8/src/main/scala/%24package%24/PekkoQuickstart.scala).
 

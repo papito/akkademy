@@ -10,7 +10,7 @@ import org.apache.pekko.actor.typed.MailboxSelector
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.actor.typed.scaladsl.adapter._
 
-object LimitedCapacityActor {
+object BlockingLimitedCapacityActor {
   def apply(): Behavior[String] = Behaviors.receive {
     (context, message) =>
       context.log.info(s"Received message: $message")
@@ -19,39 +19,38 @@ object LimitedCapacityActor {
   }
 }
 
-object BoundedMailboxConfig {
+object BlockingBoundedMailboxConfig {
   val config: Config = ConfigFactory.parseString("""
     pekko.actor.mailbox {
-      bounded-mailbox {
+      blocking-bounded-mailbox {
         mailbox-type = "org.apache.pekko.dispatch.BoundedMailbox"
         mailbox-capacity = 2
-        mailbox-push-timeout-time = 0s
+        mailbox-push-timeout-time = 1s
       }
     }
   """)
-
 }
 
-object BoundedMailboxApp extends App {
+object BlockingBoundedMailboxApp extends App {
   ActorSystem(
     Behaviors.setup[String] {
       context =>
         val limitedCapacityActor = context.spawn(
-          LimitedCapacityActor(),
-          "LimitedCapacityActor",
-          MailboxSelector.fromConfig("pekko.actor.mailbox.bounded-mailbox")
+          BlockingLimitedCapacityActor(),
+          "BlockingLimitedCapacityActor",
+          MailboxSelector.fromConfig("pekko.actor.mailbox.blocking-bounded-mailbox")
         )
 
         val deadLetterListener = context.spawn(DeadLetterListener(), "deadLetterListener")
         context.system.toClassic.eventStream.subscribe(deadLetterListener.toClassic, classOf[DeadLetter])
 
-        for (j <- 1 to 3) {
+        for (j <- 1 to 5) {
           limitedCapacityActor ! s"Message $j"
         }
 
         Behaviors.empty
     },
-    "BoundedMailboxSystem",
-    BoundedMailboxConfig.config
+    "BlockingBoundedMailboxSystem",
+    BlockingBoundedMailboxConfig.config
   )
 }

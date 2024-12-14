@@ -2,7 +2,7 @@ import akkademy.iot.Device
 import org.apache.pekko.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import org.scalatest.funsuite.AnyFunSuiteLike
 
-class iotDeviceTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
+class IotDeviceTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
   import Device._
 
   test("Device actor must reply with empty reading if no temperature is known") {

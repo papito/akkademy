@@ -4,7 +4,7 @@ import akkademy.iot.DeviceManager.RequestTrackDevice
 import org.apache.pekko.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import org.scalatest.funsuite.AnyFunSuiteLike
 
-class iotDeviceManagerTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
+class IotDeviceManagerTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
 
   test("DeviceManager actor must reply to registration requests") {
     val probe = createTestProbe[DeviceRegistered]()

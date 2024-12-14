@@ -12,7 +12,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.concurrent.duration._
 
-class iotDeviceGroupQueryTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
+class IotDeviceGroupQueryTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
 
   test("DeviceGroupQuery must return temperature value for working devices") {
     val requester = createTestProbe[RespondAllTemperatures]()

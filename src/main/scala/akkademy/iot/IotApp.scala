@@ -1,6 +1,7 @@
 package akkademy.iot
 
 import org.apache.pekko
+
 import pekko.actor.typed.{ActorSystem, Behavior, PostStop, Signal}
 import pekko.actor.typed.scaladsl.AbstractBehavior
 import pekko.actor.typed.scaladsl.ActorContext
@@ -25,6 +26,6 @@ private class IotSupervisor(context: ActorContext[Nothing]) extends AbstractBeha
       this
   }
 }
-object iotApp extends App {
+object IotApp extends App {
   ActorSystem[Nothing](IotSupervisor(), "iot-system")
 }

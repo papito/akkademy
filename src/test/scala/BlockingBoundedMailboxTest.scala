@@ -1,5 +1,5 @@
-import akkademy.mailbox.BoundedMailboxConfig
-import akkademy.mailbox.LimitedCapacityActor
+import akkademy.mailbox.BlockingBoundedMailboxConfig
+import akkademy.mailbox.BlockingLimitedCapacityActor
 import org.apache.pekko.actor.DeadLetter
 import org.apache.pekko.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import org.apache.pekko.actor.typed.MailboxSelector
@@ -9,26 +9,26 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers
 
 
-class BoundedMailboxTest
-  extends ScalaTestWithActorTestKit(BoundedMailboxConfig.config)
+class BlockingBoundedMailboxTest
+  extends ScalaTestWithActorTestKit(BlockingBoundedMailboxConfig.config)
   with AnyFunSuiteLike
     with Matchers {
 
-  test("BoundedMailboxApp should receive one dead letter") {
+  test("BlockingBoundedMailboxApp should receive no dead letters") {
     val deadLetterProbe = createTestProbe[DeadLetter]()
-    val limitedCapacityActor = spawn(
-      LimitedCapacityActor(),
-      "LimitedCapacityActor",
-      MailboxSelector.fromConfig("pekko.actor.mailbox.bounded-mailbox")
+    val blockingLimitedCapacityActor = spawn(
+      BlockingLimitedCapacityActor(),
+      "BlockingLimitedCapacityActor",
+      MailboxSelector.fromConfig("pekko.actor.mailbox.blocking-bounded-mailbox")
     )
 
     system.eventStream ! EventStream.Subscribe(deadLetterProbe.ref)
     system.toClassic.eventStream.subscribe(deadLetterProbe.ref.toClassic, classOf[DeadLetter])
 
-    for (j <- 1 to 8) {
-      limitedCapacityActor ! s"Message $j"
+    for (j <- 1 to 4) {
+      blockingLimitedCapacityActor ! s"Message $j"
     }
 
-    deadLetterProbe.expectMessageType[DeadLetter]
+    deadLetterProbe.expectNoMessage()
   }
 }

@@ -16,7 +16,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.concurrent.duration._
 
-class iotDeviceGroupTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
+class IotDeviceGroupTest extends ScalaTestWithActorTestKit with AnyFunSuiteLike {
 
   test("DeviceGroup actor must be able to register a device actor") {
     val probe = createTestProbe[DeviceRegistered]()
