@@ -40,8 +40,9 @@ From the [IoT example](https://doc.akka.io/docs/akka/current/typed/guide/tutoria
 
 To tag a test with `Focused`, add the `Focused` tag to the test, like this:
 ```scala
-   test("BoundedMailboxApp should receive one dead letter", Focused) {
-   }
+test("BoundedMailboxApp should receive one dead letter", Focused) {
+    ... test here
+}
 ```
 
 ### Running the linter and auto-formatter
