@@ -8,10 +8,16 @@ A set of small examples using Scala & Pekko.
 
 ## TOC
 
-### Greeter
-From the [Quick Start guide](https://github.com/apache/pekko-quickstart-scala.g8/blob/main/src/main/g8/src/main/scala/%24package%24/PekkoQuickstart.scala),
+### PingPongApp
+A simple example of a couple of punk actors sending messages to each other.
 
-### IoT
+### BoundedMailboxApp
+Shows that an overwhelmed actor mailbox will drop messages.
+
+### GreeterApp
+From the [Quick Start guide](https://github.com/apache/pekko-quickstart-scala.g8/blob/main/src/main/g8/src/main/scala/%24package%24/PekkoQuickstart.scala).
+
+### iotApp
 From the [IoT example](https://doc.akka.io/docs/akka/current/typed/guide/tutorial_1.html).
 
 
@@ -25,9 +31,8 @@ From the [IoT example](https://doc.akka.io/docs/akka/current/typed/guide/tutoria
 
 To tag a test with `Focused`, add the `Focused` tag to the test, like this:
 ```scala
-"actor x must do y" taggedAs Focused in {
-    // test code
-}
+   test("BoundedMailboxApp should receive one dead letter", Focused) {
+   }
 ```
 
 ### Running the linter

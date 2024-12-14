@@ -2,7 +2,6 @@ package akkademy.iot
 
 //#device-with-passivate
 import org.apache.pekko
-
 import pekko.actor.typed.ActorRef
 import pekko.actor.typed.Behavior
 import pekko.actor.typed.PostStop

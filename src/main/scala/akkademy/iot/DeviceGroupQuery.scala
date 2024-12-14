@@ -1,15 +1,14 @@
 package akkademy.iot
 
 import org.apache.pekko
-
-import scala.concurrent.duration._
-
 import pekko.actor.typed.ActorRef
 import pekko.actor.typed.Behavior
 import pekko.actor.typed.scaladsl.AbstractBehavior
 import pekko.actor.typed.scaladsl.ActorContext
 import pekko.actor.typed.scaladsl.Behaviors
 import pekko.actor.typed.scaladsl.TimerScheduler
+
+import scala.concurrent.duration._
 
 object DeviceGroupQuery {
 
