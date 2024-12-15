@@ -15,6 +15,7 @@ class ChildStopOnErrorTest extends ScalaTestWithActorTestKit with AnyFunSuiteLik
     val testProbe = TestProbe()
 
     parentActor ! TriggerChild
+
     testProbe.expectTerminated(childActor)
   }
 }
