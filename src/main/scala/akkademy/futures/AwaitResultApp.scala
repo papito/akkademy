@@ -28,9 +28,9 @@ object MultiplierActor {
   }
 }
 
-object MultiplicationApp extends App {
+object AwaitResultApp extends App {
   implicit val timeout: Timeout = 3.seconds
-  implicit val system: ActorSystem[MultiplierActor.Multiply] = ActorSystem(MultiplierActor(), "MultiplicationSystem")
+  implicit val system: ActorSystem[MultiplierActor.Multiply] = ActorSystem(MultiplierActor(), "AwaitResultSystem")
   implicit val ec: ExecutionContextExecutor = system.executionContext
 
   private val resultFuture: Future[MultiplierActor.Result] = system.ask(ref => MultiplierActor.Multiply(5, ref))
