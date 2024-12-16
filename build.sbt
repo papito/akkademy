@@ -6,7 +6,9 @@ val pekkoVersion = "1.1.2"
 
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-actor-typed"         % pekkoVersion,
+  "org.apache.pekko" %% "pekko-stream-typed"        % pekkoVersion,
   "org.apache.pekko" %% "pekko-persistence-testkit" % pekkoVersion % Test,
+
   "org.scalatest"    %% "scalatest" % "3.2.19"      % Test,
 
   "ch.qos.logback"   % "logback-classic"            % "1.5.12",
