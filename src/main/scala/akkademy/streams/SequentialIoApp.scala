@@ -1,4 +1,4 @@
-package streams
+package akkademy.streams
 
 import org.apache.pekko.stream.scaladsl.FileIO
 import org.apache.pekko.stream.scaladsl.Framing

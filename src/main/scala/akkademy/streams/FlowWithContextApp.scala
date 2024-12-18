@@ -1,4 +1,4 @@
-package streams
+package akkademy.streams
 
 import org.apache.pekko.Done
 import org.apache.pekko.NotUsed
@@ -43,7 +43,7 @@ object FlowWithContextApp extends App {
   ).map(req => (req, RequestContext(generateRequestId(), System.currentTimeMillis())))
 
   // Create the source
-  val source: Source[(Request, RequestContext),NotUsed] = Source(requests)
+  val source: Source[(Request, RequestContext), NotUsed] = Source(requests)
 
   // Create a sink that logs the results with context
   private val sink = Sink.foreach[(ProcessedRequest, RequestContext)] {

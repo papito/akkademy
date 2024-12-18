@@ -1,4 +1,4 @@
-package streams
+package akkademy.streams
 
 import org.apache.pekko.Done
 import org.apache.pekko.actor.typed.ActorSystem

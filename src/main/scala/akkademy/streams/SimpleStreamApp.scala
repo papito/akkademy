@@ -1,11 +1,10 @@
-package streams
+package akkademy.streams
 
 import org.apache.pekko.NotUsed
 import org.apache.pekko.actor.typed.ActorSystem
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.scaladsl.Flow
-import org.apache.pekko.stream.scaladsl.Sink
 import org.apache.pekko.stream.scaladsl.Source
 
 import scala.concurrent.Await
@@ -23,7 +22,8 @@ object SimpleStreamApp extends App {
 
   // as these run in different threads, the order of the output is not guaranteed
   println("Streams #2")
-  Source(1 to 6).via(Flow[Int].map(_ * 2)).to(Sink.foreach(println(_))).run()
+  private val res2 = Source(1 to 6).via(Flow[Int].map(_ * 2)).runForeach(println(_))
 
+  Await.result(res2, Duration.Inf)
   system.terminate()
 }
